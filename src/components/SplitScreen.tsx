@@ -31,7 +31,7 @@ const Panel = styled(Paper)(({ theme }) => ({
   flex: 1,
   display: "flex",
   flexDirection: "column",
-  padding: theme.spacing(3),
+  padding: theme.spacing(2),
   backgroundColor: theme.palette.background.paper,
   height: "100%",
   overflow: "hidden",
@@ -66,14 +66,7 @@ const Header = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginBottom: theme.spacing(3),
-  height: 40,
-}));
-
-const ContentContainer = styled(Box)(() => ({
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
+  marginBottom: theme.spacing(2),
 }));
 
 const ErrorText = styled(Typography)(({ theme }) => ({
@@ -85,7 +78,7 @@ const JsonContainer = styled(Box)(({ theme }) => ({
   flex: 1,
   overflow: "auto",
   backgroundColor: theme.palette.background.paper,
-  padding: theme.spacing(1.5),
+  padding: "10px",
   borderRadius: "4px",
   border: `1px solid ${theme.palette.divider}`,
   "& .react-json-view": {
@@ -191,17 +184,15 @@ const SplitScreen: React.FC = () => {
           </Box>
           {isMobile && <ThemeToggle />}
         </Header>
-        <ContentContainer>
-          <StyledTextField
-            multiline
-            fullWidth
-            value={tokenInput}
-            onChange={handleTokenChange}
-            placeholder="Paste your Cashu token here..."
-            variant="outlined"
-          />
-          {error && <ErrorText variant="body2">{error}</ErrorText>}
-        </ContentContainer>
+        <StyledTextField
+          multiline
+          fullWidth
+          value={tokenInput}
+          onChange={handleTokenChange}
+          placeholder="Paste your Cashu token here..."
+          variant="outlined"
+        />
+        {error && <ErrorText variant="body2">{error}</ErrorText>}
       </Panel>
       <Divider />
       <Panel>
@@ -222,26 +213,22 @@ const SplitScreen: React.FC = () => {
           </Box>
           {!isMobile && <ThemeToggle />}
         </Header>
-        <ContentContainer>
-          <JsonContainer>
-            {jsonContent && (
-              <ReactJson
-                src={jsonContent}
-                theme={
-                  theme.palette.mode === "dark" ? "monokai" : "rjv-default"
-                }
-                onEdit={handleJsonChange}
-                displayDataTypes={false}
-                enableClipboard={false}
-                style={{
-                  backgroundColor: "transparent",
-                  fontSize: "14px",
-                  fontFamily: "monospace",
-                }}
-              />
-            )}
-          </JsonContainer>
-        </ContentContainer>
+        <JsonContainer>
+          {jsonContent && (
+            <ReactJson
+              src={jsonContent}
+              theme={theme.palette.mode === "dark" ? "monokai" : "rjv-default"}
+              onEdit={handleJsonChange}
+              displayDataTypes={false}
+              enableClipboard={false}
+              style={{
+                backgroundColor: "transparent",
+                fontSize: "14px",
+                fontFamily: "monospace",
+              }}
+            />
+          )}
+        </JsonContainer>
       </Panel>
     </Container>
   );
