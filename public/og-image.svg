@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#000000"/>
+  <circle cx="600" cy="315" r="200" stroke="#FFFFFF" stroke-width="8"/>
+  <path d="M600 115V515" stroke="#FFFFFF" stroke-width="8"/>
+  <path d="M400 315H800" stroke="#FFFFFF" stroke-width="8"/>
+  <text x="600" y="550" font-family="Arial" font-size="48" fill="#FFFFFF" text-anchor="middle">Cashu Token Decoder</text>
+</svg> 
