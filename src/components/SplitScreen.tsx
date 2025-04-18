@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  TextField,
   Paper,
   Typography,
   useTheme as useMuiTheme,
   useMediaQuery,
   IconButton,
   Tooltip,
+  styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
-import ReactJson, { InteractionProps } from "react-json-view";
-import Editor from "@monaco-editor/react";
-import ThemeToggle from "./ThemeToggle";
+import { InteractionProps } from "react-json-view";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import ClearIcon from "@mui/icons-material/Clear";
+import ThemeToggle from "./ThemeToggle";
+import TokenInput from "./TokenInput";
+import JsonViewer from "./JsonViewer";
+import JsonEditor from "./JsonEditor";
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -50,25 +50,6 @@ const Divider = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  flex: 1,
-  "& .MuiInputBase-root": {
-    height: "100%",
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-  },
-  "& .MuiInputBase-input": {
-    height: "100% !important",
-    fontFamily: "monospace",
-    overflowX: "auto",
-    wordBreak: "break-all",
-    WebkitHyphens: "none",
-    MozHyphens: "none",
-    hyphens: "none",
-    fontSize: "0.9em",
-  },
-}));
-
 const Header = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
@@ -76,33 +57,6 @@ const Header = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   padding: theme.spacing(0.5, 0),
   height: theme.spacing(6),
-}));
-
-const ErrorText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.error.main,
-  marginTop: theme.spacing(1),
-}));
-
-const JsonContainer = styled(Box)(({ theme }) => ({
-  flex: 1,
-  overflow: "auto",
-  backgroundColor: theme.palette.background.paper,
-  padding: "10px",
-  borderRadius: "4px",
-  border: `1px solid ${theme.palette.divider}`,
-  "& .react-json-view": {
-    height: "100%",
-  },
-  "& .react-json-view .icon-container": {
-    display: "inline-flex",
-    alignItems: "center",
-    whiteSpace: "nowrap",
-  },
-}));
-
-const ButtonGroup = styled(Box)(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing(1),
 }));
 
 const ToggleText = styled(Typography)(({ theme }) => ({
@@ -234,43 +188,15 @@ const SplitScreen: React.FC = () => {
   return (
     <Container>
       <Panel>
-        <Header>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="h6" color="textPrimary">
-              Token
-            </Typography>
-            <ButtonGroup>
-              <Tooltip title="Copy token">
-                <IconButton
-                  size="small"
-                  onClick={handleCopyToken}
-                  disabled={!tokenInput}
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Clear token">
-                <IconButton
-                  size="small"
-                  onClick={handleClearToken}
-                  disabled={!tokenInput}
-                >
-                  <ClearIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </ButtonGroup>
-          </Box>
+        <TokenInput
+          tokenInput={tokenInput}
+          error={error}
+          handleTokenChange={handleTokenChange}
+          handleCopyToken={handleCopyToken}
+          handleClearToken={handleClearToken}
+        >
           {isMobile && <ThemeToggle />}
-        </Header>
-        <StyledTextField
-          multiline
-          fullWidth
-          value={tokenInput}
-          onChange={handleTokenChange}
-          placeholder="Paste your Cashu token here..."
-          variant="outlined"
-        />
-        {error && <ErrorText variant="body2">{error}</ErrorText>}
+        </TokenInput>
       </Panel>
       <Divider />
       <Panel>
@@ -294,38 +220,20 @@ const SplitScreen: React.FC = () => {
           </Box>
           {!isMobile && <ThemeToggle />}
         </Header>
-        <JsonContainer>
-          {jsonContent && !editorMode && (
-            <ReactJson
-              src={jsonContent}
-              theme={theme.palette.mode === "dark" ? "monokai" : "rjv-default"}
-              onEdit={handleJsonChange}
-              displayDataTypes={false}
-              enableClipboard={false}
-              style={{
-                backgroundColor: "transparent",
-                fontSize: "14px",
-                fontFamily: "monospace",
-              }}
-            />
-          )}
-          {editorMode && (
-            <Editor
-              height="100%"
-              language="json"
-              value={editorContent}
-              onChange={handleEditorChange}
-              theme={theme.palette.mode === "dark" ? "vs-dark" : "light"}
-              options={{
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                wordWrap: "on",
-                automaticLayout: true,
-              }}
-            />
-          )}
-        </JsonContainer>
+        {jsonContent && !editorMode && (
+          <JsonViewer
+            jsonContent={jsonContent}
+            themeMode={theme.palette.mode}
+            onEdit={handleJsonChange}
+          />
+        )}
+        {editorMode && (
+          <JsonEditor
+            editorContent={editorContent}
+            themeMode={theme.palette.mode}
+            onChange={handleEditorChange}
+          />
+        )}
       </Panel>
     </Container>
   );
