@@ -1,60 +1,71 @@
 import React, { useState } from "react";
-import { Box, TextField, Paper, Typography, Alert } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Paper,
+  Typography,
+  useTheme as useMuiTheme,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
 import ReactJson, { InteractionProps } from "react-json-view";
+import ThemeToggle from "./ThemeToggle";
 
-const SplitContainer = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   height: "100vh",
   width: "100vw",
   overflow: "hidden",
-  backgroundColor: "#f5f5f5",
-});
+  backgroundColor: theme.palette.background.default,
+}));
 
-const Panel = styled(Paper)({
+const Panel = styled(Paper)(({ theme }) => ({
   flex: 1,
   display: "flex",
   flexDirection: "column",
-  gap: "10px",
-  padding: "20px",
-  borderRadius: 0,
-  boxShadow: "none",
-  backgroundColor: "#ffffff",
+  padding: theme.spacing(2),
+  backgroundColor: theme.palette.background.paper,
   height: "100%",
   overflow: "hidden",
-});
+}));
 
-const Divider = styled(Box)({
+const Divider = styled(Box)(({ theme }) => ({
   width: "1px",
-  backgroundColor: "#e0e0e0",
-});
+  backgroundColor: theme.palette.divider,
+}));
 
-const StyledTextField = styled(TextField)({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  "& .MuiOutlinedInput-root": {
-    fontFamily: "monospace",
-    fontSize: "14px",
-    backgroundColor: "#ffffff",
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
+  "& .MuiInputBase-root": {
+    height: "100%",
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
   "& .MuiInputBase-input": {
-    flex: 1,
-    height: "auto !important",
+    height: "100% !important",
+    fontFamily: "monospace",
   },
-});
+}));
 
-const JsonContainer = styled(Box)({
+const Header = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: theme.spacing(2),
+}));
+
+const ErrorText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.error.main,
+  marginTop: theme.spacing(1),
+}));
+
+const JsonContainer = styled(Box)(({ theme }) => ({
   flex: 1,
   overflow: "auto",
-  backgroundColor: "#ffffff",
+  backgroundColor: theme.palette.background.paper,
   padding: "10px",
   borderRadius: "4px",
-  border: "1px solid #e0e0e0",
+  border: `1px solid ${theme.palette.divider}`,
   "& .react-json-view": {
     height: "100%",
   },
@@ -63,12 +74,13 @@ const JsonContainer = styled(Box)({
     alignItems: "center",
     whiteSpace: "nowrap",
   },
-});
+}));
 
 const SplitScreen: React.FC = () => {
   const [tokenInput, setTokenInput] = useState("");
   const [jsonContent, setJsonContent] = useState<Token | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const theme = useMuiTheme();
 
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
@@ -103,53 +115,49 @@ const SplitScreen: React.FC = () => {
   };
 
   return (
-    <SplitContainer>
+    <Container>
       <Panel>
-        <Typography
-          variant="h6"
-          sx={{
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            color: "#333",
-          }}
-        >
-          Cashu Token
-        </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
+        <Header>
+          <Typography variant="h6" color="textPrimary">
+            Token
+          </Typography>
+        </Header>
         <StyledTextField
-          fullWidth
           multiline
+          fullWidth
           value={tokenInput}
           onChange={handleTokenChange}
-          placeholder="Enter Cashu token (cashuA... or cashuB...)"
+          placeholder="Paste your Cashu token here..."
           variant="outlined"
         />
+        {error && <ErrorText variant="body2">{error}</ErrorText>}
       </Panel>
       <Divider />
       <Panel>
-        <Typography
-          variant="h6"
-          sx={{
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            color: "#333",
-          }}
-        >
-          Parsed JSON
-        </Typography>
+        <Header>
+          <Typography variant="h6" color="textPrimary">
+            JSON
+          </Typography>
+          <ThemeToggle />
+        </Header>
         <JsonContainer>
           {jsonContent && (
             <ReactJson
               src={jsonContent}
-              theme="rjv-default"
-              name={false}
+              theme={theme.palette.mode === "dark" ? "monokai" : "rjv-default"}
+              onEdit={handleJsonChange}
               displayDataTypes={false}
               enableClipboard={false}
-              style={{ fontFamily: "monospace", fontSize: "14px" }}
-              onEdit={handleJsonChange}
+              style={{
+                backgroundColor: "transparent",
+                fontSize: "14px",
+                fontFamily: "monospace",
+              }}
             />
           )}
         </JsonContainer>
       </Panel>
-    </SplitContainer>
+    </Container>
   );
 };
 
