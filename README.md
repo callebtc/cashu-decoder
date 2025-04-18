@@ -28,6 +28,8 @@ A web-based tool for parsing and editing Cashu tokens. This application provides
    npm install
    # or
    yarn install
+   # or 
+   npm install --legacy-peer-deps
    ```
 
 3. Start the development server:
