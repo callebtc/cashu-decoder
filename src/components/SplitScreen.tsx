@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, TextField, Paper, Typography, Alert } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
@@ -21,22 +21,30 @@ const Panel = styled(Paper)({
   borderRadius: 0,
   boxShadow: "none",
   backgroundColor: "#ffffff",
+  height: "100%",
+  overflow: "hidden",
 });
 
-const Splitter = styled(Box)({
-  width: "4px",
+const Divider = styled(Box)({
+  width: "1px",
   backgroundColor: "#e0e0e0",
-  cursor: "col-resize",
-  "&:hover": {
-    backgroundColor: "#bdbdbd",
-  },
 });
 
 const StyledTextField = styled(TextField)({
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
   "& .MuiOutlinedInput-root": {
     fontFamily: "monospace",
     fontSize: "14px",
     backgroundColor: "#ffffff",
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+  },
+  "& .MuiInputBase-input": {
+    flex: 1,
+    height: "auto !important",
   },
 });
 
@@ -47,15 +55,20 @@ const JsonContainer = styled(Box)({
   padding: "10px",
   borderRadius: "4px",
   border: "1px solid #e0e0e0",
+  "& .react-json-view": {
+    height: "100%",
+  },
+  "& .react-json-view .icon-container": {
+    display: "inline-flex",
+    alignItems: "center",
+    whiteSpace: "nowrap",
+  },
 });
 
 const SplitScreen: React.FC = () => {
   const [tokenInput, setTokenInput] = useState("");
   const [jsonContent, setJsonContent] = useState<Token | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [leftWidth, setLeftWidth] = useState(50);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
 
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
@@ -89,40 +102,9 @@ const SplitScreen: React.FC = () => {
     }
   };
 
-  const handleMouseDown = () => {
-    isDragging.current = true;
-    document.body.style.cursor = "col-resize";
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging.current || !containerRef.current) return;
-
-    const containerWidth = containerRef.current.offsetWidth;
-    const newLeftWidth = (e.clientX / containerWidth) * 100;
-
-    if (newLeftWidth >= 20 && newLeftWidth <= 80) {
-      setLeftWidth(newLeftWidth);
-    }
-  };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-    document.body.style.cursor = "default";
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, []);
-
   return (
-    <SplitContainer ref={containerRef}>
-      <Panel sx={{ width: `${leftWidth}%` }}>
+    <SplitContainer>
+      <Panel>
         <Typography
           variant="h6"
           sx={{
@@ -136,15 +118,14 @@ const SplitScreen: React.FC = () => {
         <StyledTextField
           fullWidth
           multiline
-          rows={20}
           value={tokenInput}
           onChange={handleTokenChange}
           placeholder="Enter Cashu token (cashuA... or cashuB...)"
           variant="outlined"
         />
       </Panel>
-      <Splitter onMouseDown={handleMouseDown} />
-      <Panel sx={{ width: `${100 - leftWidth}%` }}>
+      <Divider />
+      <Panel>
         <Typography
           variant="h6"
           sx={{
