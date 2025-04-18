@@ -5,6 +5,7 @@ import {
   Paper,
   Typography,
   useTheme as useMuiTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
@@ -17,6 +18,9 @@ const Container = styled(Box)(({ theme }) => ({
   width: "100vw",
   overflow: "hidden",
   backgroundColor: theme.palette.background.default,
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+  },
 }));
 
 const Panel = styled(Paper)(({ theme }) => ({
@@ -27,11 +31,18 @@ const Panel = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   height: "100%",
   overflow: "hidden",
+  [theme.breakpoints.down("sm")]: {
+    height: "50%",
+  },
 }));
 
 const Divider = styled(Box)(({ theme }) => ({
   width: "1px",
   backgroundColor: theme.palette.divider,
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+    height: "1px",
+  },
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -81,6 +92,7 @@ const SplitScreen: React.FC = () => {
   const [jsonContent, setJsonContent] = useState<Token | null>(null);
   const [error, setError] = useState<string | null>(null);
   const theme = useMuiTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
@@ -121,6 +133,7 @@ const SplitScreen: React.FC = () => {
           <Typography variant="h6" color="textPrimary">
             Token
           </Typography>
+          {isMobile && <ThemeToggle />}
         </Header>
         <StyledTextField
           multiline
@@ -138,7 +151,7 @@ const SplitScreen: React.FC = () => {
           <Typography variant="h6" color="textPrimary">
             JSON
           </Typography>
-          <ThemeToggle />
+          {!isMobile && <ThemeToggle />}
         </Header>
         <JsonContainer>
           {jsonContent && (
