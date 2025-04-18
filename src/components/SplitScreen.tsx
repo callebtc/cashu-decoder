@@ -6,11 +6,15 @@ import {
   Typography,
   useTheme as useMuiTheme,
   useMediaQuery,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { getDecodedToken, getEncodedToken, Token } from "@cashu/cashu-ts";
 import ReactJson, { InteractionProps } from "react-json-view";
 import ThemeToggle from "./ThemeToggle";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -87,6 +91,11 @@ const JsonContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
+const ButtonGroup = styled(Box)(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(1),
+}));
+
 const SplitScreen: React.FC = () => {
   const [tokenInput, setTokenInput] = useState("");
   const [jsonContent, setJsonContent] = useState<Token | null>(null);
@@ -126,13 +135,53 @@ const SplitScreen: React.FC = () => {
     }
   };
 
+  const handleCopyToken = () => {
+    if (tokenInput) {
+      navigator.clipboard.writeText(tokenInput);
+    }
+  };
+
+  const handleClearToken = () => {
+    setTokenInput("");
+    setJsonContent(null);
+    setError(null);
+  };
+
+  const handleCopyJson = () => {
+    if (jsonContent) {
+      navigator.clipboard.writeText(JSON.stringify(jsonContent, null, 2));
+    }
+  };
+
   return (
     <Container>
       <Panel>
         <Header>
-          <Typography variant="h6" color="textPrimary">
-            Token
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography variant="h6" color="textPrimary">
+              Token
+            </Typography>
+            <ButtonGroup>
+              <Tooltip title="Copy token">
+                <IconButton
+                  size="small"
+                  onClick={handleCopyToken}
+                  disabled={!tokenInput}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Clear token">
+                <IconButton
+                  size="small"
+                  onClick={handleClearToken}
+                  disabled={!tokenInput}
+                >
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </ButtonGroup>
+          </Box>
           {isMobile && <ThemeToggle />}
         </Header>
         <StyledTextField
@@ -148,9 +197,20 @@ const SplitScreen: React.FC = () => {
       <Divider />
       <Panel>
         <Header>
-          <Typography variant="h6" color="textPrimary">
-            JSON
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography variant="h6" color="textPrimary">
+              JSON
+            </Typography>
+            <Tooltip title="Copy JSON">
+              <IconButton
+                size="small"
+                onClick={handleCopyJson}
+                disabled={!jsonContent}
+              >
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
           {!isMobile && <ThemeToggle />}
         </Header>
         <JsonContainer>
