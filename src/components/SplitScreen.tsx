@@ -67,6 +67,8 @@ const Header = styled(Box)(({ theme }) => ({
   justifyContent: "space-between",
   alignItems: "center",
   marginBottom: theme.spacing(2),
+  padding: theme.spacing(0.5, 0),
+  height: theme.spacing(6),
 }));
 
 const ErrorText = styled(Typography)(({ theme }) => ({
