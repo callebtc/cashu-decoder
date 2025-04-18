@@ -3,11 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview",
+    "clean": "rm -rf dist node_modules",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@cashu/cashu-ts": "^2.4.2",
