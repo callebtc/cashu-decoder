@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -59,6 +59,12 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-input": {
     height: "100% !important",
     fontFamily: "monospace",
+    overflowX: "auto",
+    wordBreak: "break-all",
+    WebkitHyphens: "none",
+    MozHyphens: "none",
+    hyphens: "none",
+    fontSize: "0.9em",
   },
 }));
 
@@ -105,6 +111,19 @@ const SplitScreen: React.FC = () => {
   const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  useEffect(() => {
+    const savedToken = localStorage.getItem("cashuToken");
+    if (savedToken) {
+      setTokenInput(savedToken);
+      try {
+        const decodedToken = getDecodedToken(savedToken);
+        setJsonContent(decodedToken);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to parse token");
+      }
+    }
+  }, []);
+
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
     setTokenInput(input);
@@ -114,12 +133,14 @@ const SplitScreen: React.FC = () => {
       try {
         const decodedToken = getDecodedToken(input);
         setJsonContent(decodedToken);
+        localStorage.setItem("cashuToken", input);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to parse token");
         setJsonContent(null);
       }
     } else {
       setJsonContent(null);
+      localStorage.removeItem("cashuToken");
     }
   };
 
@@ -147,6 +168,7 @@ const SplitScreen: React.FC = () => {
     setTokenInput("");
     setJsonContent(null);
     setError(null);
+    localStorage.removeItem("cashuToken");
   };
 
   const handleCopyJson = () => {
