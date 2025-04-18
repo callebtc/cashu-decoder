@@ -17,7 +17,8 @@
     "@mui/material": "^7.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-json-editor-ajrm": "^2.5.14"
+    "react-json-editor-ajrm": "^2.5.14",
+    "react-json-view": "^1.21.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
